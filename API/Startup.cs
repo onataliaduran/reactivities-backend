@@ -12,7 +12,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
+using AutoMapper;
+using Application.Activities;
+using Application.Core;
 using Persistence;
+using API.Extensions;
 
 namespace API
 {
@@ -31,16 +36,31 @@ namespace API
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
-            });
+            services.AddApplicationServices(Configuration);
+            // services.AddSwaggerGen(c =>
+            // {
+            //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
+            // });
 
-            // Inject the DataContext class in the services and specify the data server we are using
-            services.AddDbContext<DataContext>(opt => 
-            {
-              opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-            });
+            // // Inject the DataContext class in the services and specify the data server we are using
+            // services.AddDbContext<DataContext>(opt => 
+            // {
+            //   opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            // });
+
+            // // Cors policy
+            // services.AddCors(opt => {
+            //   opt.AddPolicy("CorsPolicy", policy =>
+            //   {
+            //     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000"); 
+            //   });
+            // });
+
+            // // Mediator
+            // services.AddMediatR(typeof(List.Handler).Assembly); // This tells Mediator where to find our handlers
+
+            // // Mapper
+            // services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         }
 
 
@@ -57,6 +77,8 @@ namespace API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
